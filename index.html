@@ -40,6 +40,7 @@
         }
         #employee-login {
             margin-top: 20px;
+            display: none;
         }
     </style>
 </head>
@@ -55,7 +56,7 @@
         <button onclick="makePayment()">Fizetés</button>
     </div>
 
-    <div id="employee-login" style="display:none;">
+    <div id="employee-login">
         <h2>Dolgozó bejelentkezés</h2>
         <input type="text" id="employee-code" placeholder="Beolvasott kód">
         <button onclick="loginEmployee()">Dolgozói bejelentkezés</button>
@@ -71,8 +72,9 @@
         };
 
         const validPaymentCode = "87453215489757777"; // A kód, amit az app ad
-
         const employeeCode = "98754367896544432"; // Dolgozói kód
+
+        let magicMousePresent = false;  // Ellenőrizzük, hogy van-e Magic Mouse
 
         function getProducts() {
             const code = document.getElementById('payment-code').value;
@@ -80,8 +82,13 @@
 
             // Ellenőrizzük, hogy a fizetési kód érvényes-e
             if (code === validPaymentCode) {
+                // Megjelenítjük a termékeket
                 for (let key in products) {
                     productList.push(products[key]);
+                    // Ellenőrizzük, hogy van-e Magic Mouse
+                    if (products[key].name === "Apple Magic Mouse") {
+                        magicMousePresent = true;
+                    }
                 }
 
                 displayProducts(productList);
@@ -106,11 +113,13 @@
                 productsDiv.appendChild(productDiv);
             });
 
-            // Ha van "Apple Magic Mouse", kérjük a dolgozó bejelentkezését
-            if (products.some(product => product.name === "Apple Magic Mouse")) {
+            // Ha van Magic Mouse, akkor megjelenik a dolgozói bejelentkezés gomb
+            if (magicMousePresent) {
+                document.getElementById('payment-section').style.display = 'block';
                 document.getElementById('employee-login').style.display = 'block';
             } else {
                 document.getElementById('payment-section').style.display = 'block';
+                document.getElementById('employee-login').style.display = 'none';
             }
         }
 
