@@ -37,6 +37,7 @@
         }
         #payment-section {
             margin-top: 20px;
+            display: none;
         }
         #employee-login {
             margin-top: 20px;
@@ -47,22 +48,23 @@
 <body>
     <h1>Üdvözöljük a boltban!</h1>
     <label for="code">Kérjük, írja be a fizetési kódot:</label>
-    <input type="text" id="payment-code" placeholder="Fizetési kód (pl. 87453215489757777)">
-    <button onclick="getProducts()">Termékek megjelenítése</button>
+    <input type="text" id="payment-code" placeholder="Fizetési kód">
+    <button id="show-products-btn">Termékek megjelenítése</button>
     
     <div id="products"></div>
 
-    <div id="payment-section" style="display:none;">
-        <button onclick="makePayment()">Fizetés</button>
+    <div id="payment-section">
+        <button id="payment-btn">Fizetés</button>
     </div>
 
     <div id="employee-login">
         <h2>Dolgozó bejelentkezés</h2>
         <input type="text" id="employee-code" placeholder="Beolvasott kód">
-        <button onclick="loginEmployee()">Dolgozói bejelentkezés</button>
+        <button id="employee-login-btn">Dolgozói bejelentkezés</button>
     </div>
 
     <script>
+        // Termékek és kódok
         const products = {
             "DT3450": { name: "DōTERRA™", price: 3450 },
             "SL6000": { name: "Smack leves", price: 6000 },
@@ -71,32 +73,31 @@
             "S200": { name: "Szatyor", price: 200 }
         };
 
-        const validPaymentCode = "87453215489757777"; // A kód, amit az app ad
+        const validPaymentCode = "87453215489757777"; // A fizetési kód
         const employeeCode = "98754367896544432"; // Dolgozói kód
 
         let magicMousePresent = false;  // Ellenőrizzük, hogy van-e Magic Mouse
 
-        function getProducts() {
+        // Termékek megjelenítése
+        document.getElementById('show-products-btn').addEventListener('click', function() {
             const code = document.getElementById('payment-code').value;
             const productList = [];
 
-            // Ellenőrizzük, hogy a fizetési kód érvényes-e
             if (code === validPaymentCode) {
-                // Megjelenítjük a termékeket
+                // Ha a kód érvényes, akkor megjelenítjük a termékeket
                 for (let key in products) {
                     productList.push(products[key]);
-                    // Ellenőrizzük, hogy van-e Magic Mouse
                     if (products[key].name === "Apple Magic Mouse") {
                         magicMousePresent = true;
                     }
                 }
-
                 displayProducts(productList);
             } else {
-                alert("Érvénytelen fizetési kód!");
+                alert("Érvénytelen fizetési kód! Kérem, próbálja újra.");
             }
-        }
+        });
 
+        // Termékek megjelenítése a képernyőn
         function displayProducts(products) {
             const productsDiv = document.getElementById('products');
             productsDiv.innerHTML = '';
@@ -113,32 +114,36 @@
                 productsDiv.appendChild(productDiv);
             });
 
-            // Ha van Magic Mouse, akkor megjelenik a dolgozói bejelentkezés gomb
+            // Ha van Magic Mouse, akkor megjelenik a fizetés és dolgozói bejelentkezés
             if (magicMousePresent) {
                 document.getElementById('payment-section').style.display = 'block';
                 document.getElementById('employee-login').style.display = 'block';
             } else {
-                document.getElementById('payment-section').style.display = 'block';
+                document.getElementById('payment-section').style.display = 'none';
                 document.getElementById('employee-login').style.display = 'none';
             }
         }
 
-        function makePayment() {
-            alert('A fizetés folyamatban!');
-            // Fizetési logika itt...
-        }
+        // Fizetés gomb
+        document.getElementById('payment-btn').addEventListener('click', function() {
+            if (magicMousePresent) {
+                alert('A fizetés folyamatban van! Kérjük, jelentkezzen be dolgozóként.');
+            } else {
+                alert('A fizetés nem elérhető, mert nincs Magic Mouse a kosárban!');
+            }
+        });
 
-        function loginEmployee() {
+        // Dolgozói bejelentkezés
+        document.getElementById('employee-login-btn').addEventListener('click', function() {
             const enteredCode = document.getElementById('employee-code').value;
             if (enteredCode === employeeCode) {
                 alert('Dolgozó bejelentkezett!');
-                document.getElementById('payment-section').style.display = 'block';
                 document.getElementById('employee-login').style.display = 'none';
+                alert('Fizetés elindítva!');
             } else {
                 alert('Hibás kód!');
             }
-        }
+        });
     </script>
 </body>
 </html>
-
